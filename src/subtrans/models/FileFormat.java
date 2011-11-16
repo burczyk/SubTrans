@@ -1,5 +1,5 @@
 package subtrans.models;
 
 public enum FileFormat {
-	ALA, OLA
+	MICRO_DVD, SUB_RIP, NOT_RECOGNIZED
 }
