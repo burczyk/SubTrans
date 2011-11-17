@@ -18,7 +18,6 @@ import subtrans.models.TextSequence;
 public class MicroDVDReader implements IReader {
 	
 	private File file;
-	private int test;
 	
 	public MicroDVDReader(File file) {
 		this.file = file;
