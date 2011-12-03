@@ -1,4 +1,4 @@
-package subtrans.readers;
+package subtrans.reader;
 
 import java.io.BufferedReader;
 import java.io.File;

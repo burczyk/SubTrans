@@ -1,13 +1,15 @@
-package subtrans.models;
+package subtrans.model;
 
 public class Translation {
 	private String sequence;
 	private String translation;
-	
+	private int occurences;
+
 	public Translation(String sequence, String translation) {
 		super();
 		this.sequence = sequence;
 		this.translation = translation;
+		this.occurences = 1;
 	}
 
 	public String getSequence() {
@@ -25,6 +27,17 @@ public class Translation {
 	public void setTranslation(String translation) {
 		this.translation = translation;
 	}
-	
-	
+
+	public int getOccurences() {
+		return occurences;
+	}
+
+	public void setOccurences(int occurences) {
+		this.occurences = occurences;
+	}
+
+	public void increaseOccurences() {
+		++this.occurences;
+	}
+
 }

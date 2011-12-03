@@ -2,7 +2,7 @@ package subtrans.interfaces;
 
 import java.util.List;
 
-import subtrans.models.TextSequence;
+import subtrans.model.TextSequence;
 
 /**
  * 

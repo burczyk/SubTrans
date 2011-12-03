@@ -1,4 +1,4 @@
-package subtrans.tests;
+package subtrans.test;
 
 import static org.junit.Assert.*;
 
@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import subtrans.builders.GeneralDBBuilder;
-import subtrans.exceptions.NotADirectoryException;
-import subtrans.models.Translation;
+import subtrans.builder.GeneralDBBuilder;
+import subtrans.exception.NotADirectoryException;
+import subtrans.model.Translation;
 
 public class GeneralDBBuilderTest {
 	@Test

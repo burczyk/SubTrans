@@ -1,11 +1,11 @@
-package subtrans.builders;
+package subtrans.builder;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import subtrans.interfaces.ITranslationBase;
-import subtrans.models.TextSequence;
-import subtrans.models.Translation;
+import subtrans.model.TextSequence;
+import subtrans.model.Translation;
 
 /**
  * 

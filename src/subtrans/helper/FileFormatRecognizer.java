@@ -1,10 +1,10 @@
-package subtrans.helpers;
+package subtrans.helper;
 
 import java.io.File;
 import java.util.List;
 
-import subtrans.models.FileFormat;
-import subtrans.readers.GeneralFileReader;
+import subtrans.model.FileFormat;
+import subtrans.reader.GeneralFileReader;
 
 public class FileFormatRecognizer {
 	private static final String MICRO_DVD_REGEXP = "\\{\\d+\\}\\{\\d+\\}.+";

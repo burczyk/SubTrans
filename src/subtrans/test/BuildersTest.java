@@ -1,4 +1,4 @@
-package subtrans.tests;
+package subtrans.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import subtrans.builders.MicroDVDDBBuilder;
-import subtrans.models.TextSequence;
-import subtrans.models.Translation;
-import subtrans.readers.MicroDVDReader;
+import subtrans.builder.MicroDVDDBBuilder;
+import subtrans.model.TextSequence;
+import subtrans.model.Translation;
+import subtrans.reader.MicroDVDReader;
 
 public class BuildersTest {
 	@Test

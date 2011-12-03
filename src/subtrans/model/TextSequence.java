@@ -1,4 +1,4 @@
-package subtrans.models;
+package subtrans.model;
 
 public class TextSequence {
 	private String startMark;

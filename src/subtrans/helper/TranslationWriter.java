@@ -1,8 +1,8 @@
-package subtrans.helpers;
+package subtrans.helper;
 
 import java.util.List;
 
-import subtrans.models.TextSequence;
+import subtrans.model.TextSequence;
 
 public class TranslationWriter {
 	public void write(String filename, List<TextSequence> textSequenceList){

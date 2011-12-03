@@ -5,7 +5,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * 
+ * @author kamilburczyk
+ * 
+ *         Class executes queries to SQLite database which has table
+ *         eng_pol(definition, translation) where both columns are text.
+ * 
+ */
 public class SQLiteQueryExecutor {
 	private Connection connection;
 
@@ -20,20 +30,30 @@ public class SQLiteQueryExecutor {
 		}
 	}
 
-	public String translate(String sequence) {
+	/**
+	 * 
+	 * @param sequence
+	 *            Sequence to translate.
+	 * @return List of all potential translations which match given definition.
+	 */
+	public List<String> translate(String sequence) {
+		List<String> translations = new ArrayList<String>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("select * from eng_pol where definition='" + sequence + "';");
 			while (rs.next()) {
-				return rs.getString("translation");
+				translations.add(rs.getString("translation"));
 			}
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return translations;
 	}
 
+	/**
+	 * Closes connection to database.
+	 */
 	public void close() {
 		try {
 			connection.close();

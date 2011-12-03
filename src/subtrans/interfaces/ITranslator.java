@@ -1,7 +1,9 @@
 package subtrans.interfaces;
 
-import subtrans.models.Translation;
+import java.util.List;
+
+import subtrans.model.Translation;
 
 public interface ITranslator {
-	Translation translate(String sequence);
+	List<Translation> translate(String sequence);
 }

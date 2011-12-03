@@ -1,16 +1,16 @@
-package subtrans.tests;
+package subtrans.test;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
 
-import subtrans.builders.GeneralDBBuilder;
-import subtrans.exceptions.NotADirectoryException;
-import subtrans.models.TextSequence;
-import subtrans.readers.TmpReader;
-import subtrans.translators.HistoricalTranslator;
-import subtrans.translators.Translator;
+import subtrans.builder.GeneralDBBuilder;
+import subtrans.exception.NotADirectoryException;
+import subtrans.model.TextSequence;
+import subtrans.reader.TmpReader;
+import subtrans.translator.HistoricalTranslator;
+import subtrans.translator.Translator;
 
 public class TranslatorTest {
 	@Test

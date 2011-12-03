@@ -1,4 +1,4 @@
-package subtrans.tests;
+package subtrans.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,8 +6,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import subtrans.helpers.FileFormatRecognizer;
-import subtrans.models.FileFormat;
+import subtrans.helper.FileFormatRecognizer;
+import subtrans.model.FileFormat;
 
 public class FileFormatRecognizerTest {
 	@Test

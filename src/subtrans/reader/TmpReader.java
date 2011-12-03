@@ -1,25 +1,26 @@
-package subtrans.readers;
+package subtrans.reader;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import subtrans.interfaces.IReader;
-import subtrans.models.TextSequence;
+import subtrans.model.TextSequence;
 
 /**
  * 
  * @author kamilburczyk
  *
- * Reads subtitles in format: '{' start '}' '{' stop '}' tekst [ '|' tekst ... ]
- * {5222}{5271}Wiesz co będzie pierwszą rzeczą,|jaką zrobię po powrocie do domu?
- * {5272}{5292}Pozbędziesz się pryszczy?
+ * Reads subtitles in format: start ':' tekst [ '|' tekst ... ]
+ * 00:05:22:Wiesz co będzie pierwszą rzeczą|jaką zrobię po powrocie do domu?
+ * 00:05:24:Pozbędziesz się pryszczy?
  */
-public class MicroDVDReader implements IReader {
-	
+public class TmpReader implements IReader {
+
 	private File file;
 	
-	public MicroDVDReader(File file) {
+	public TmpReader(File file) {
+		super();
 		this.file = file;
 	}
 
@@ -34,12 +35,11 @@ public class MicroDVDReader implements IReader {
 		
 		for(String line : listOfLines){
 			line = line.trim();	//removes spaces in the beginning and in the end
-			if(!"".equals(line)){
+			if(!"".equals(line)){			
 				try{
-					startMark = line.substring(1, line.indexOf("}"));
-					line = line.substring(line.indexOf("}") + 2);
-					endMark = line.substring(0, line.indexOf("}"));
-					sequence = line.substring(line.indexOf("}") + 1).replaceAll("\\{.+\\}", ""); //sometimes subtitles look like {5272}{5292}{y:i}ala123 and {y:i} if formatting tag, so we can remove it for translation purposes.
+					startMark = line.substring(0, 9);
+					endMark = "";
+					sequence = line.substring(9, line.length());
 					sequencesList.add(new TextSequence(startMark, endMark, sequence));
 				} catch(StringIndexOutOfBoundsException e){
 					System.err.println("Something wrong in file: " + file.getName() + " sequence: " + line);

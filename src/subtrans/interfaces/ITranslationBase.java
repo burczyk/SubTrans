@@ -2,7 +2,7 @@ package subtrans.interfaces;
 
 import java.util.List;
 
-import subtrans.models.Translation;
+import subtrans.model.Translation;
 
 public interface ITranslationBase {
 	List<Translation> buildDatabase();

@@ -1,4 +1,4 @@
-package subtrans.tests;
+package subtrans.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import subtrans.models.TextSequence;
-import subtrans.readers.MicroDVDReader;
-import subtrans.readers.TmpReader;
+import subtrans.model.TextSequence;
+import subtrans.reader.MicroDVDReader;
+import subtrans.reader.TmpReader;
 
 public class ReadersTest {
 	
