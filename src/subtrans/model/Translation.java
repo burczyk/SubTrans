@@ -40,4 +40,8 @@ public class Translation {
 		++this.occurences;
 	}
 
+	public String toString() {
+		return this.sequence + " <---> " + this.translation;
+	}
+
 }

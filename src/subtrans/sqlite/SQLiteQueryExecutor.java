@@ -12,8 +12,7 @@ import java.util.List;
  * 
  * @author kamilburczyk
  * 
- *         Class executes queries to SQLite database which has table
- *         eng_pol(definition, translation) where both columns are text.
+ *         Class executes queries to SQLite database which has table eng_pol(definition, translation) where both columns are text.
  * 
  */
 public class SQLiteQueryExecutor {
@@ -37,6 +36,7 @@ public class SQLiteQueryExecutor {
 	 * @return List of all potential translations which match given definition.
 	 */
 	public List<String> translate(String sequence) {
+		sequence = removeApostrophe(sequence);
 		List<String> translations = new ArrayList<String>();
 		try {
 			Statement statement = connection.createStatement();
@@ -60,5 +60,13 @@ public class SQLiteQueryExecutor {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String removeApostrophe(String s) {
+		int pos = s.indexOf("'");
+		if (pos > 0) {
+			return s.substring(0, pos);
+		}
+		return s.replaceAll("'", ""); // there is also possibility like: 'cause
 	}
 }

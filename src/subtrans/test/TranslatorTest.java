@@ -9,23 +9,25 @@ import subtrans.builder.GeneralDBBuilder;
 import subtrans.exception.NotADirectoryException;
 import subtrans.model.TextSequence;
 import subtrans.reader.TmpReader;
+import subtrans.translator.DictionaryTranslator;
 import subtrans.translator.HistoricalTranslator;
 import subtrans.translator.Translator;
 
 public class TranslatorTest {
 	@Test
-	public void testTranslator(){
+	public void testTranslator() {
 		try {
 			HistoricalTranslator ht = new HistoricalTranslator(new GeneralDBBuilder(new File("subtitles/eng"), new File("subtitles/pl")).buildDatabase());
-			Translator translator = new Translator(ht, null);
-			
-			TmpReader reader = new TmpReader(new File("subtitles/new/House.S08E06.HDTV.XviD-LOL.[VTV].avi-ENG.txt"));
+			DictionaryTranslator dt = new DictionaryTranslator("dictionary/OxfordDictionaryPJN.db");
+			Translator translator = new Translator(ht, dt);
+
+			TmpReader reader = new TmpReader(new File("subtitles/new/short.txt"));
 			List<TextSequence> sequences = reader.readFile();
-			
-			for(TextSequence sequence : sequences){
+
+			for (TextSequence sequence : sequences) {
 				translator.translate(sequence.getSequence());
 			}
-			
+
 		} catch (NotADirectoryException e) {
 			e.printStackTrace();
 		}

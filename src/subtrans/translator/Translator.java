@@ -19,12 +19,14 @@ public class Translator implements ITranslator {
 	public List<Translation> translate(String sequence) {
 		List<Translation> translations = historicalTranslator.translate(sequence);
 		if (translations != null && translations.size() > 0) {
-			// for (Translation translation : translations) {
-			// System.out.println(translation.getSequence() + " <---> " +
-			// translation.getOccurences() + ": " +
-			// translation.getTranslation());
-			// }
-			System.out.println(translations.get(0).getSequence() + " <---> " + translations.get(0).getOccurences() + ": |" + translations.get(0).getTranslation() + "|");
+			System.out.println(translations.get(0));
+		} else {
+			try {
+				Translation t = dictionaryTranslator.translate(sequence.toLowerCase().replaceAll("\\|", " ").replaceAll("\\.", "")).get(0);
+				System.out.println(t);
+			} catch (Exception e) {
+				// e.printStackTrace();
+			}
 		}
 		return null;
 	}
