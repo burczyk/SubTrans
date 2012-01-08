@@ -34,6 +34,8 @@ public class HistoricalTranslator implements ITranslator {
 		}
 		List<Translation> translationsList = new ArrayList<Translation>(translationsSet);
 		Collections.sort(translationsList, new TranslationComparator());
+		if (translationsList.size() > 0)
+			System.err.println(translationsList.get(0));
 		return translationsList;
 	}
 

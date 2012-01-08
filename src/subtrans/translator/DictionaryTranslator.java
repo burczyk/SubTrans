@@ -28,34 +28,95 @@ public class DictionaryTranslator implements ITranslator {
 	public List<Translation> translate(String sequence) {
 		List<Translation> translations = new ArrayList<Translation>();
 		String[] words = sequence.split(" ");
-		if (words.length == 1) {
-			List<String> rawTranslations = executor.translate(sequence);
-			System.out.println(rawTranslations);
-		} else {
-			String translation = "";
-			for (String word : words) {
-				if (!notTranslateableWords.contains(word.toLowerCase())) {
-					word = removePunctationSigns(word.toLowerCase());
-					List<String> rawTranslations = executor.translate(word);
-					if (rawTranslations.size() > 0) {
-						List<Translation> possibleTranslations = listOfPossibleTranslations(rawTranslations);
-						if (possibleTranslations.size() > 0) {
-							translation += possibleTranslations.get(0).getTranslation() + " ";
-						} else {
-							translation += word + " ";
-						}
-					} else {
-						translation += word + " ";
-					}
-				}
+		if (words.length > 1) {
+			String wholeSequenceTranslated = translateSequence(Arrays.asList(words));
+			if (wholeSequenceTranslated != null) {
+				translations.add(new Translation(sequence, wholeSequenceTranslated));
 			}
-			translations.add(new Translation(sequence, translation.trim()));
+		} else { // words.length == 1
+			translations.add(new Translation(sequence, getBestTranslation(words[0])));
 		}
-
 		return translations;
 	}
 
-	private String clean(String s) {
+	public String translateSequence(List<String> originalSequence) {
+		String result;
+		String sequenceString = listToString(originalSequence);
+		for (String word : originalSequence) {
+			List<String> rawTranslations = executor.translate(getDefaultForm(word)); // translation for each word
+			for (String rawTranslation : rawTranslations) {
+				result = getCorrespondingPLTranslation(sequenceString, rawTranslation);
+				if (result != null) {
+					System.err.println("Sequence: " + sequenceString + " " + result);
+					return result;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private String listToString(List<String> list) {
+		StringBuilder sb = new StringBuilder();
+		for (String s : list) {
+			sb.append(s);
+			sb.append(" ");
+		}
+		return sb.toString().trim();
+	}
+
+	public String getBestTranslation(String word) {
+		if (!notTranslateableWords.contains(word.toLowerCase())) {
+			word = removePunctationSigns(word.toLowerCase());
+			List<String> rawTranslations = executor.translate(word); // XML that contains definition for given word
+			if (rawTranslations.size() > 0) {
+				List<String> possibleTranslations = new ArrayList<String>();
+				for (String rawTranslation : rawTranslations) {
+					possibleTranslations.addAll(extractPLWords(rawTranslation));
+				}
+				if (possibleTranslations.size() > 0) {
+					return possibleTranslations.get(0) + " ";
+				}
+
+			} else {
+				// When there is no polish translation it means, that word leads to another version, e.g. was --> be
+				for (String rawTranslation : rawTranslations) {
+					List<String> listOfVersions = extractGBWords(rawTranslation); // other versions of given word
+					for (String version : listOfVersions) {
+						if (!version.equals(word)) {
+							// System.out.println("wywolanie rekurencyjne dla slowa: " + version);
+							return getBestTranslation(version);
+						}
+					}
+				}
+				return word + " ";
+			}
+		} else {
+			System.out.println("brak tlumaczenia w slowniku dla slowa: " + word);
+			return word + " ";
+		}
+		return word + " ";
+	}
+
+	// returns default form of given word, e.g. was --> be; cat --> cat
+	public String getDefaultForm(String word) {
+		List<String> rawTranslations = executor.translate(word);
+		for (String rawTranslation : rawTranslations) {
+			if (hasTranslation(rawTranslation)) {
+				return word;
+			} else {
+				List<String> listOfVersions = extractGBWords(rawTranslation); // other versions of given word
+				for (String version : listOfVersions) {
+					if (!version.equals(word)) {
+						return getDefaultForm(version);
+					}
+				}
+			}
+		}
+		return word;
+	}
+
+	public String clean(String s) {
 		return removePunctationSigns(removeBraces(removeXMLTags(s)));
 	}
 
@@ -75,49 +136,45 @@ public class DictionaryTranslator implements ITranslator {
 		return s.trim();
 	}
 
+	private String removeSpecialCharacters(String s) {
+		return s.replaceAll("&\\w+;", "").trim();
+	}
+
 	public List<Translation> listOfPossibleTranslations(List<String> rawTranslations) {
 		List<Translation> translations = new ArrayList<Translation>();
-		int beginIndex = 0;
 		for (String rawTranslation : rawTranslations) {
-			int gbStart = 0;
-			int gbEnd = 0;
-			int plStart = 0;
-			int plEnd = 0;
-			boolean found = false;
-
-			while (gbStart > -1 && gbEnd > -1 && plStart > -1 && plEnd > -1) {
-				gbStart = rawTranslation.indexOf("<GB>", beginIndex);
-				gbEnd = rawTranslation.indexOf("</GB>", beginIndex);
-				plStart = rawTranslation.indexOf("<PL>", beginIndex);
-				plEnd = rawTranslation.indexOf("</PL>", beginIndex);
-
-				try {
-					if (gbStart > -1 && gbEnd > -1 && plStart > -1 && plEnd > -1) {
-						String definition = rawTranslation.substring(gbStart + "<GB>".length(), gbEnd).trim();
-						String translation = rawTranslation.substring(plStart + "<PL>".length(), plEnd).trim();
-
-						String cleanDef = clean(definition);
-						String cleanTrans = clean(translation);
-
-						if (cleanTrans.length() > 0) {
-							translations.add(new Translation(removeXMLTags(definition), removePunctationSigns(translation)));
-							found = true;
-						}
-
-						beginIndex = plEnd + 5;
-					}
-				} catch (StringIndexOutOfBoundsException e) {
-					beginIndex = plEnd + 5;
-					// System.err.println("wyjatek ;)" + plEnd);
+			List<String> definitions = extractGBWords(rawTranslation);
+			for (String definition : definitions) {
+				String correspondingTranslation = getCorrespondingPLTranslation(definition, rawTranslation);
+				if (correspondingTranslation != null && correspondingTranslation.length() > 0) {
+					translations.add(new Translation(removeXMLTags(definition), removePunctationSigns(correspondingTranslation)));
 				}
-			}
-
-			if (!found) {
-
 			}
 		}
 		Collections.sort(translations, new TranslationLengthComparator());
 		return translations;
+	}
+
+	public String getCorrespondingPLTranslation(String gbSequence, String rawTranslation) {
+		Pattern p = Pattern.compile("<GB\\b[^>]*>\\s*" + addSlashes(gbSequence) + "</GB><PL>(.*?)</PL>");
+		Matcher m = p.matcher(rawTranslation);
+		if (m.find()) {
+			if (m.group(1) != null) {
+				String tagContent = removeSpecialCharacters(m.group(1));
+				if (tagContent.length() > 0) {
+					return tagContent.trim();
+				}
+			}
+		}
+		return null;
+	}
+
+	private String addSlashes(String s) {
+		String[] signs = new String[] { "(", ")", "[", "]", "?", "!", ".", ",", ":" };
+		for (String sign : signs) {
+			s = s.replace(sign, "\\" + sign);
+		}
+		return s;
 	}
 
 	public List<String> extractGBWords(String s) {
@@ -125,8 +182,10 @@ public class DictionaryTranslator implements ITranslator {
 		Pattern p = Pattern.compile("<GB\\b[^>]*>(.*?)</GB>");
 		Matcher m = p.matcher(s);
 		while (m.find()) {
-			String tagContent = m.group(1);
-			result.add(tagContent);
+			String tagContent = clean(m.group(1)).trim();
+			if (tagContent != null && tagContent.length() > 0) {
+				result.add(tagContent);
+			}
 		}
 		return result;
 	}
@@ -136,10 +195,22 @@ public class DictionaryTranslator implements ITranslator {
 		Pattern p = Pattern.compile("<PL\\b[^>]*>(.*?)</PL>");
 		Matcher m = p.matcher(s);
 		while (m.find()) {
-			String tagContent = m.group(1);
-			result.add(tagContent);
+			String tagContent = removeSpecialCharacters(m.group(1));
+			if (tagContent.length() > 0) {
+				result.add(tagContent);
+			}
 		}
 		return result;
+	}
+
+	public boolean hasTranslation(String s) {
+		Pattern p = Pattern.compile("<PL\\b[^>]*>(.*?)</PL>");
+		Matcher m = p.matcher(s);
+		if (m.find()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

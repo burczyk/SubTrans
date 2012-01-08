@@ -12,6 +12,13 @@ public class Translation {
 		this.occurences = 1;
 	}
 
+	public Translation(String sequence, String translation, int occurences) {
+		super();
+		this.sequence = sequence;
+		this.translation = translation;
+		this.occurences = occurences;
+	}
+
 	public String getSequence() {
 		return sequence;
 	}

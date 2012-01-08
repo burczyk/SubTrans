@@ -8,6 +8,7 @@ import org.junit.Test;
 import subtrans.builder.GeneralDBBuilder;
 import subtrans.exception.NotADirectoryException;
 import subtrans.model.TextSequence;
+import subtrans.model.Translation;
 import subtrans.reader.TmpReader;
 import subtrans.translator.DictionaryTranslator;
 import subtrans.translator.HistoricalTranslator;
@@ -21,11 +22,13 @@ public class TranslatorTest {
 			DictionaryTranslator dt = new DictionaryTranslator("dictionary/OxfordDictionaryPJN.db");
 			Translator translator = new Translator(ht, dt);
 
-			TmpReader reader = new TmpReader(new File("subtitles/new/short.txt"));
+			// TmpReader reader = new TmpReader(new File("subtitles/new/short.txt"));
+			TmpReader reader = new TmpReader(new File("subtitles/new/House.S08E06.HDTV.XviD-LOL.[VTV].avi-ENG.txt"));
 			List<TextSequence> sequences = reader.readFile();
 
 			for (TextSequence sequence : sequences) {
-				translator.translate(sequence.getSequence());
+				List<Translation> list = translator.translate(sequence.getSequence());
+				System.out.println(list);
 			}
 
 		} catch (NotADirectoryException e) {
