@@ -47,7 +47,7 @@ public class DictionaryTranslator implements ITranslator {
 			for (String rawTranslation : rawTranslations) {
 				result = getCorrespondingPLTranslation(sequenceString, rawTranslation);
 				if (result != null) {
-					System.err.println("Sequence: " + sequenceString + " " + result);
+					System.err.println("Sequence: " + sequenceString + " <---> " + result);
 					return result;
 				}
 			}
@@ -92,8 +92,7 @@ public class DictionaryTranslator implements ITranslator {
 				return word + " ";
 			}
 		} else {
-			System.out.println("brak tlumaczenia w slowniku dla slowa: " + word);
-			return word + " ";
+			return " ";
 		}
 		return word + " ";
 	}

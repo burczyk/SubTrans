@@ -8,7 +8,6 @@ import org.junit.Test;
 import subtrans.builder.GeneralDBBuilder;
 import subtrans.exception.NotADirectoryException;
 import subtrans.model.TextSequence;
-import subtrans.model.Translation;
 import subtrans.reader.TmpReader;
 import subtrans.translator.DictionaryTranslator;
 import subtrans.translator.HistoricalTranslator;
@@ -27,8 +26,7 @@ public class TranslatorTest {
 			List<TextSequence> sequences = reader.readFile();
 
 			for (TextSequence sequence : sequences) {
-				List<Translation> list = translator.translate(sequence.getSequence());
-				System.out.println(list);
+				System.out.println(sequence.getSequence() + " <---> " + Translator.translationsToString(translator.translate(sequence.getSequence())));
 			}
 
 		} catch (NotADirectoryException e) {

@@ -9,14 +9,13 @@ import subtrans.model.Translation;
 
 /**
  * 
- * @author kamilburczyk
- * Creates List<Translation> for subtitles in MicroDVD format.
+ * @author kamilburczyk Creates List<Translation> for subtitles in MicroDVD format.
  */
 public class MicroDVDDBBuilder implements ITranslationBase {
 
 	private List<TextSequence> sequencesList;
 	private List<TextSequence> translationsList;
-	
+
 	public MicroDVDDBBuilder(List<TextSequence> sequencesList, List<TextSequence> translationsList) {
 		this.sequencesList = sequencesList;
 		this.translationsList = translationsList;
@@ -27,49 +26,56 @@ public class MicroDVDDBBuilder implements ITranslationBase {
 	 */
 	public List<Translation> buildDatabaseAvg() {
 		List<Translation> translations = new LinkedList<Translation>();
-		for(TextSequence sequence : sequencesList){
-			try{
-				int avgMarkSeq = (Integer.parseInt(sequence.getStartMark()) + Integer.parseInt(sequence.getEndMark()))/2;
+		for (TextSequence sequence : sequencesList) {
+			try {
+				int avgMarkSeq = (Integer.parseInt(sequence.getStartMark()) + Integer.parseInt(sequence.getEndMark())) / 2;
 				int minDiff = Integer.MAX_VALUE;
 				int minDiffPos = -1;
-				for(TextSequence translation: translationsList){
-					int avgMarkTrans = (Integer.parseInt(translation.getStartMark()) + Integer.parseInt(translation.getEndMark()))/2;
-					if(Math.abs(avgMarkSeq - avgMarkTrans) < minDiff){
+				for (TextSequence translation : translationsList) {
+					int avgMarkTrans = (Integer.parseInt(translation.getStartMark()) + Integer.parseInt(translation.getEndMark())) / 2;
+					if (Math.abs(avgMarkSeq - avgMarkTrans) < minDiff) {
 						minDiff = Math.abs(avgMarkSeq - avgMarkTrans);
 						minDiffPos = translationsList.indexOf(translation);
 					}
 				}
 				translations.add(new Translation(sequence.getSequence(), translationsList.get(minDiffPos).getSequence()));
-			} catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				System.err.println(String.format("Wrong format for sequence: {%s}{%s}%s", sequence.getStartMark(), sequence.getEndMark(), sequence.getSequence()));
 			}
 		}
-		
+
 		return translations;
 	}
 
 	@Override
 	public List<Translation> buildDatabase() {
 		List<Translation> translations = new LinkedList<Translation>();
-		for(TextSequence sequence : sequencesList){
-			try{
+		for (TextSequence sequence : sequencesList) {
+			try {
 				int startMarkSeq = Integer.parseInt(sequence.getStartMark());
 				int minDiff = Integer.MAX_VALUE;
 				int minDiffPos = -1;
-				for(TextSequence translation: translationsList){
+				for (TextSequence translation : translationsList) {
 					int startMarkTrans = Integer.parseInt(translation.getStartMark());
-					if(Math.abs(startMarkSeq - startMarkTrans) < minDiff){
+					if (Math.abs(startMarkSeq - startMarkTrans) < minDiff) {
 						minDiff = Math.abs(startMarkSeq - startMarkTrans);
 						minDiffPos = translationsList.indexOf(translation);
 					}
 				}
-				translations.add(new Translation(sequence.getSequence(), translationsList.get(minDiffPos).getSequence()));
-			} catch(NumberFormatException e){
+				translations.add(new Translation(clean(sequence.getSequence()), clean(translationsList.get(minDiffPos).getSequence())));
+			} catch (NumberFormatException e) {
 				System.err.println(String.format("Wrong format for sequence: {%s}{%s}%s", sequence.getStartMark(), sequence.getEndMark(), sequence.getSequence()));
 			}
 		}
-		
+
 		return translations;
+	}
+
+	private String clean(String s) {
+		s = s.toLowerCase();
+		s = s.replaceAll("[^\\wąęśćżźńłó'\\s]", " ");
+		s = s.replaceAll("\\s+", " ");
+		return s.trim();
 	}
 
 }

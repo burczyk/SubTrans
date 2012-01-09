@@ -69,7 +69,6 @@ public class Translator implements ITranslator {
 	}
 
 	private void markTranslationsAsDone(List<Translation> list) {
-		System.out.println("MARK AS DONE:" + list.toString());
 		for (Translation t : list) {
 			if (t.getOccurences() < 1) {
 				t.setOccurences(1);
@@ -81,6 +80,15 @@ public class Translator implements ITranslator {
 		StringBuilder sb = new StringBuilder();
 		for (Translation t : list) {
 			sb.append(t.getSequence());
+			sb.append(" ");
+		}
+		return sb.toString().trim().toLowerCase();
+	}
+
+	public static String translationsToString(List<Translation> list) {
+		StringBuilder sb = new StringBuilder();
+		for (Translation t : list) {
+			sb.append(t.getTranslation());
 			sb.append(" ");
 		}
 		return sb.toString().trim();
