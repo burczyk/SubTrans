@@ -1,10 +1,15 @@
 package subtrans.translator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import subtrans.builder.GeneralDBBuilder;
+import subtrans.exception.NotADirectoryException;
 import subtrans.interfaces.ITranslator;
+import subtrans.model.TextSequence;
 import subtrans.model.Translation;
+import subtrans.reader.TmpReader;
 
 public class Translator implements ITranslator {
 	private HistoricalTranslator historicalTranslator;
@@ -105,6 +110,29 @@ public class Translator implements ITranslator {
 			result.add(sequence);
 		}
 		return result;
+	}
+
+	public static void main(String[] args) {
+		if (args.length < 3) {
+			System.err.println("Za mało argumentów. Wywołanie: java Translator sciezka_eng sciezka_pl nowy_plik_z_napisami");
+			System.exit(1);
+		}
+
+		try {
+			HistoricalTranslator ht = new HistoricalTranslator(new GeneralDBBuilder(new File(args[0]), new File(args[1])).buildDatabase());
+			DictionaryTranslator dt = new DictionaryTranslator("dictionary/OxfordDictionaryPJN.db");
+			Translator translator = new Translator(ht, dt);
+
+			TmpReader reader = new TmpReader(new File(args[2]));
+			List<TextSequence> sequences = reader.readFile();
+
+			for (TextSequence sequence : sequences) {
+				System.out.println(sequence.getSequence() + " <---> " + Translator.translationsToString(translator.translate(sequence.getSequence())));
+			}
+
+		} catch (NotADirectoryException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
